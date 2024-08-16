@@ -21,7 +21,7 @@ client_values_to_update = [
     ('AbilityHanger/Keyword/Discover4_Body', '마나 비용이 4 이하인 대지가 아닌 카드를 추방할 때까지 서고 맨 위의 카드를 추방한다. 당신은 해당 카드를 마나 비용 없이 발동하거나 손으로 가져갈 수 있다. 나머지 카드는 서고 맨 밑에 무작위 순서로 추가한다.'),
     ('AbilityHanger/Keyword/Discover5_Body', '마나 비용이 5 이하인 대지가 아닌 카드를 추방할 때까지 서고 맨 위의 카드를 추방한다. 당신은 해당 카드를 마나 비용 없이 발동하거나 손으로 가져갈 수 있다. 나머지 카드는 서고 맨 밑에 무작위 순서로 추가한다.'),
     ('AbilityHanger/Keyword/DiscoverX_Body', '마나 비용이 X 이하인 대지가 아닌 카드를 추방할 때까지 서고 맨 위의 카드를 추방한다. 당신은 해당 카드를 마나 비용 없이 발동하거나 손으로 가져갈 수 있다. 나머지 카드는 서고 맨 밑에 무작위 순서로 추가한다.'),
-    ('AbilityHanger/PhyrexianMana_Title', '피렉시아 마나')
+    ('AbilityHanger/PhyrexianMana_Title', '피렉시아 마나'),
 ]
 
 client_select_query = f"SELECT {client_search_column}, {client_target_column} FROM {client_table_name} WHERE {client_search_column} = ?"
@@ -270,6 +270,8 @@ card_values_to_update = [
     ('413722', '{oT}: 당신의 무덤에 있는 마법물체 카드를 목표로 정한다. 당신은 이 턴에 그 카드를 발동할 수 있다. <i>(여전히 발동 비용은 지불해야 한다. 발동 시기 규칙도 여전히 적용된다.)</i>', ''),
     # v1.1.3
     ('558066', '뱀 드루이드', ''),
+     # v.1.1.4
+    ('281000', '봉기',''),
 ]
 
 card_select_query = f"SELECT {card_search_column}, {card_target_column}, {card_name_en}, {card_name_kr} FROM {card_table_name} WHERE {card_search_column} = ?"
