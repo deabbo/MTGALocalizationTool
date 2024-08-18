@@ -1,5 +1,26 @@
 -------------------------------------------------------------------------------------------------
+Version 1.2.0 (24.8.18) 업데이트 내역
+
+새 카드가 출시되면 파일 이름이 달라져서 작업이 번거로워 이 버전부터 파일은 배포를 하지 않고 실행파일만 배포합니다.
+
+혹시나 불안하시면 아래 링크에 소스코드도 있으니 참고 부탁드립니다.
+https://github.com/deabbo/MTGALocalizationTool
+
+YBLB(알케미)
+
+조개 학자(Shellfish Scholar) Threshold — 임계 -> 문턱
+생각 흔들기(Thought Rattle) Threshold — 임계 -> 문턱 
+
+발견 -> 탐색
+생각 흔들기(Thought Rattle)
+공유 자원(Pool Resources)
+검은별 추방자(Darkstar Banisher)
+계곡 가로지르기(Traverse Valley)
+장식한 주최자, 벅스톤(Buxton, Decorated Host)
+세련된 제물(Tasteful Offering)
+-------------------------------------------------------------------------------------------------
 Version 1.1.4 (24.8.16) 업데이트 내역
+
 봉기(Revolt) #NoTranslationNeeded -> 봉기 
 -------------------------------------------------------------------------------------------------
 Version 1.1.3 (24.8.14) 업데이트 내역
@@ -84,7 +105,7 @@ WOE
 사악한 조작술사, 아시오크(Ashiok, Wicked Manipulator) X장을 민다 -> X장을 추방한다 
 
 
-YWOE 
+YWOE(알케미)
 매혹적인 교차로(Captivating Crossroads) 당신이 시작플레이어가 아니었다면 -> 당신이 시작플레이어 였다면
 
 
