@@ -1,0 +1,54 @@
+[
+    {
+        "Key": "AbilityHanger/Keyword/Perpetual_Body",
+        "KoKR": "영구 효과는 영역이 변경되더라도 카드로부터 제거되지 않는다."
+    },
+    {
+        "Key": "AbilityHanger/LayeredEffect/PerpetualPowerToughness_Title",
+        "KoKR": "영구적인 공격력 및 방어력 변경"
+    },
+    {
+        "Key": "AbilityHanger/Keyword/Perpetual_Title",
+        "KoKR": "영구"
+    },
+    {
+        "Key": "DuelScene/ClientPrompt/ExaminePerpetual",
+        "KoKR": "영구 카드 보기"
+    },
+    {
+        "Key": "DuelScene/FaceHanger/Conjure",
+        "KoKR": "부르기"
+    },
+    {
+        "Key": "AbilityHanger/Keyword/Conjure_Title",
+        "KoKR": "부르기"
+    },
+    {
+        "Key": "AbilityHanger/Keyword/Conjure_Body",
+        "KoKR": "부르기한 카드가 게임에 추가됩니다."
+    },
+    {
+        "Key": "AbilityHanger/Keyword/Discover10_Body",
+        "KoKR": "마나 비용이 10 이하인 대지가 아닌 카드를 추방할 때까지 서고 맨 위의 카드를 추방한다. 당신은 해당 카드를 마나 비용 없이 발동하거나 손으로 가져갈 수 있다. 나머지 카드는 서고 맨 밑에 무작위 순서로 추가한다."
+    },
+    {
+        "Key": "AbilityHanger/Keyword/Discover3_Body",
+        "KoKR": "마나 비용이 3 이하인 대지가 아닌 카드를 추방할 때까지 서고 맨 위의 카드를 추방한다. 당신은 해당 카드를 마나 비용 없이 발동하거나 손으로 가져갈 수 있다. 나머지 카드는 서고 맨 밑에 무작위 순서로 추가한다."
+    },
+    {
+        "Key": "AbilityHanger/Keyword/Discover4_Body",
+        "KoKR": "마나 비용이 4 이하인 대지가 아닌 카드를 추방할 때까지 서고 맨 위의 카드를 추방한다. 당신은 해당 카드를 마나 비용 없이 발동하거나 손으로 가져갈 수 있다. 나머지 카드는 서고 맨 밑에 무작위 순서로 추가한다."
+    },
+    {
+        "Key": "AbilityHanger/Keyword/Discover5_Body",
+        "KoKR": "마나 비용이 5 이하인 대지가 아닌 카드를 추방할 때까지 서고 맨 위의 카드를 추방한다. 당신은 해당 카드를 마나 비용 없이 발동하거나 손으로 가져갈 수 있다. 나머지 카드는 서고 맨 밑에 무작위 순서로 추가한다."
+    },
+    {
+        "Key": "AbilityHanger/Keyword/DiscoverX_Body",
+        "KoKR": "마나 비용이 X 이하인 대지가 아닌 카드를 추방할 때까지 서고 맨 위의 카드를 추방한다. 당신은 해당 카드를 마나 비용 없이 발동하거나 손으로 가져갈 수 있다. 나머지 카드는 서고 맨 밑에 무작위 순서로 추가한다."
+    },
+    {
+        "Key": "AbilityHanger/PhyrexianMana_Title",
+        "KoKR": "피렉시아 마나"
+    }
+]
