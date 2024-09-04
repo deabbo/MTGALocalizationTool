@@ -4,6 +4,7 @@ import os
 import sys
 import json
 import unicodedata
+
 # UI 오역 수정 파트
 
 client_files = glob.glob('Raw_ClientLocalization_*.mtga')
@@ -13,7 +14,17 @@ if not client_files:
     os.system("pause")
     sys.exit()
 
-client_json_file_path = 'client_data.json'
+def get_resource_path(relative_path):
+    try:
+        # PyInstaller로 패키징된 경우
+        base_path = sys._MEIPASS
+    except AttributeError:
+        # 일반적인 실행 환경일 경우
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+client_json_file_path =  get_resource_path("client_data.json")
 
 # JSON 파일에서 데이터를 불러오기
 with open(client_json_file_path, 'r', encoding='utf-8') as json_file:
@@ -58,11 +69,13 @@ for client_file in client_files:
 
 # 카드 오역 수정파트
 
-card_json_file_path = 'card_data.json'
+card_json_file_path = get_resource_path("card_data.json")
 
 # JSON 파일에서 데이터를 불러오기
 with open(card_json_file_path, 'r', encoding='utf-8') as json_file:
     card_values_to_update = json.load(json_file)
+
+print(f"Trying to load JSON file from: {card_json_file_path}")
 
 def formatting_for_2(text):
     decomposed = ""
