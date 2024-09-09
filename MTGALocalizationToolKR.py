@@ -144,7 +144,8 @@ for card_file in card_files:
                             WHERE {card_search_column} = ?
                             AND {card_formatted_column} = ?
                         """, (new_value, search_value, formatted_value))
-                        print(f"{row[3]}({row[2]})가 {new_value}로 변경되었습니다.\n")
+                        if formatted_value != 2 :
+                            print(f"{row[3]}({row[2]})가 {new_value}로 변경되었습니다.\n")
             else:
                 print(f"{search_value}에 해당하는 값을 찾지 못하였습니다.")
 
