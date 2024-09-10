@@ -2,8 +2,8 @@ import sqlite3
 import glob
 import os
 import sys
-import json
 import unicodedata
+import requests 
 
 # UI 오역 수정 파트
 
@@ -24,11 +24,19 @@ def get_resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
-client_json_file_path =  get_resource_path("client_data.json")
+def fetch_json_from_url(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # HTTP 오류가 있는지 확인
+        return response.json()  # JSON 데이터를 파싱하여 반환
+    except requests.exceptions.RequestException as e:
+        print(f"웹에서 데이터를 가져오는 중 오류 발생: {e}")
+        sys.exit()
 
-# JSON 파일에서 데이터를 불러오기
-with open(client_json_file_path, 'r', encoding='utf-8') as json_file:
-    client_values_to_update = json.load(json_file)
+# JSON 데이터를 웹에서 가져오기
+client_json_url = "https://docs.google.com/uc?export=download&id=1oOqAmmoyJ9FJZsrWccMoLjMchAatWtou&confirm=t" 
+client_values_to_update = fetch_json_from_url(client_json_url)
+
 
 for client_file in client_files:
 
@@ -59,7 +67,6 @@ for client_file in client_files:
             else:
                 print(f"{client_search_column}에서 {search_value}를 찾지 못하였습니다.")
 
-
         client_conn.commit()
     except sqlite3.Error as e:
         print(f"{client_file}에서 에러 발생: {e}")
@@ -69,13 +76,8 @@ for client_file in client_files:
 
 # 카드 오역 수정파트
 
-card_json_file_path = get_resource_path("card_data.json")
-
-# JSON 파일에서 데이터를 불러오기
-with open(card_json_file_path, 'r', encoding='utf-8') as json_file:
-    card_values_to_update = json.load(json_file)
-
-print(f"Trying to load JSON file from: {card_json_file_path}")
+card_json_url = "https://docs.google.com/uc?export=download&id=1pSF_YCV0NPuy240Rtt0bzOmr1GyE5HMd&confirm=t"
+card_values_to_update = fetch_json_from_url(card_json_url)
 
 def formatting_for_2(text):
     decomposed = ""
