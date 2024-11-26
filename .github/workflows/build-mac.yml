@@ -1,0 +1,32 @@
+name: Build Mac Executable
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install PyInstaller
+      run: pip install pyinstaller
+
+    - name: Build executable
+      run: pyinstaller --onefile -F --icon .\icon.ico --name MTGALocalizationToolKR 
+
+    - name: Upload built file
+      uses: actions/upload-artifact@v3
+      with:
+        name: MTGALocalizationTool-macOS
+        path: dist/MTGALocalizationToolKR
