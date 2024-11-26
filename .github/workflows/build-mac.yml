@@ -23,7 +23,7 @@ jobs:
       run: pip install pyinstaller
 
     - name: Build executable
-      run: pyinstaller --onefile -F --icon .\icon.ico --name MTGALocalizationToolKR 
+      run: pyinstaller --onefile --name MTGALocalizationToolKR MTGALocalizationToolKR.py
 
     - name: Upload built file
       uses: actions/upload-artifact@v3
