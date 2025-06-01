@@ -129,7 +129,6 @@ for card_file in card_files:
 
                 if rows:
                     formatted_values = {row[2] for row in rows}  # Formatted column
-                    updated = False
                     for row in rows:
                         formatted_value = row[2]
                         new_value = None
@@ -149,10 +148,9 @@ for card_file in card_files:
                                 SET Loc = ?
                                 WHERE LocId = ? AND Formatted = ?
                             """, (new_value, search_value, formatted_value))
-                            updated = True
                     
-                    if updated:
-                        print(f"{row[1]}가 {new_value}로 변경되었습니다.\n")
+                        if formatted_value != 2 :
+                            print(f"{row[1]}가 {new_value}로 변경되었습니다.\n")
 
         else:
             
@@ -178,7 +176,6 @@ for card_file in card_files:
                     for row in rows:
                         formatted_value = row[4]
                         new_value = None
-                        updated = False
 
                         if 0 in formatted_values and formatted_value == 0:
                             new_value = value_for_0
@@ -199,8 +196,8 @@ for card_file in card_files:
                                 AND {card_formatted_column} = ?
                             """, (new_value, search_value, formatted_value))
                             updated = True
-                    if updated:
-                        print(f"{row[3]}({row[2]})가 {new_value}로 변경되었습니다.\n")
+                        if formatted_value != 2 :
+                            print(f"{row[3]}({row[2]})가 {new_value}로 변경되었습니다.\n")
 
 
         card_conn.commit()
