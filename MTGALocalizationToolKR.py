@@ -94,8 +94,6 @@ for card_file in card_files:
 
     print(f"아래 파일에 접근 : {card_file}")
 
-    card_conn = sqlite3.connect(card_file)
-    card_cursor = card_conn.cursor()
     card_table_name = 'Localizations'
     card_search_column = 'LocId'
     card_target_column = 'koKR'
@@ -103,102 +101,138 @@ for card_file in card_files:
     card_name_en = 'enUS'
     card_name_kr = 'koKR'
 
-    card_cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
-    table_names = {row[0] for row in card_cursor.fetchall()}
-
-    if 'Localizations_enUS' in table_names and 'Localizations_koKR' in table_names:
-        use_new_structure = True
-    else:
-        use_new_structure = False
-
     try:
+        card_conn = sqlite3.connect(card_file)
+        card_cursor = card_conn.cursor()
 
-        if  use_new_structure:
-            for card in card_values_to_update:
-                search_value = card['LocId']
-                value_for_0 = card['Formatted_0']
-                value_for_1 = card['Formatted_1']
-                value_for_2 = formatting_for_2(card['Formatted_0'])
+        # 사전 로딩
+        card_cursor.execute("SELECT Id, TextId FROM abilities")
+        textid_to_abilityid = {
+            str(text_id).strip(): str(ability_id).strip()
+            for ability_id, text_id in card_cursor.fetchall()
+        }
 
+        card_cursor.execute("SELECT HiddenAbilityIds, AbilityIds FROM cards")
+        ability_to_b_ids = {}
+        for hid_ids, main_ids in card_cursor.fetchall():
+            for raw in (hid_ids, main_ids):
+                if not raw:
+                    continue
+                for pair in raw.split(','):
+                    if ':' not in pair:
+                        continue
+                    A, B = pair.split(':', 1)
+                    A = str(A).strip()
+                    B = str(B).strip()
+                    ability_to_b_ids.setdefault(A, []).append(B)
+
+        card_cursor.execute("SELECT LocId, Loc FROM Localizations_koKR")
+        ko_loc_map = {str(row[0]).strip(): row[1] for row in card_cursor.fetchall()}
+
+        card_cursor.execute("SELECT LocId, Loc FROM Localizations_enUS")
+        en_loc_map = {str(row[0]).strip(): row[1] for row in card_cursor.fetchall()}
+
+        card_cursor.execute("""
+            SELECT LocId FROM Localizations_koKR 
+            WHERE Loc IN ('#NoTranslationNeeded', '#NoTransNeeded')
+        """)
+        no_trans_ids = [str(row[0]).strip() for row in card_cursor.fetchall()]
+
+        for no_trans_id in no_trans_ids:
+            ability_id = textid_to_abilityid.get(no_trans_id)
+
+            if not ability_id:
+                en_loc = en_loc_map.get(no_trans_id)
+                if en_loc and ko_loc_map.get(no_trans_id) in ['#NoTranslationNeeded', '#NoTransNeeded']:
+                    card_cursor.execute("""
+                        UPDATE Localizations_koKR
+                        SET Loc = ?
+                        WHERE LocId = ?
+                    """, (en_loc, no_trans_id))
+                continue
+
+            translated = False
+            for b_id in ability_to_b_ids.get(ability_id, []):
+                new_loc = ko_loc_map.get(b_id)
+                if new_loc and new_loc not in ['#NoTranslationNeeded', '#NoTransNeeded']:
+                    card_cursor.execute("""
+                        UPDATE Localizations_koKR
+                        SET Loc = ?
+                        WHERE LocId = ?
+                    """, (new_loc, no_trans_id))
+                    translated = True
+                    break
+
+            if not translated:
+                en_loc = en_loc_map.get(no_trans_id)
+                if en_loc and ko_loc_map.get(no_trans_id) in ['#NoTranslationNeeded', '#NoTransNeeded']:
+                    card_cursor.execute("""
+                        UPDATE Localizations_koKR
+                        SET Loc = ?
+                        WHERE LocId = ?
+                    """, (en_loc, no_trans_id))
+
+
+    # HTML 태그 치환
+        card_cursor.execute("""
+            SELECT LocId, Loc
+            FROM Localizations_koKR
+            WHERE Loc LIKE '%&lt;%' OR Loc LIKE '%&gt;%'
+        """)
+
+        rows_to_update = card_cursor.fetchall()
+
+        print(f"치환 대상 행 개수: {len(rows_to_update)}")
+
+        # 2. 한 행씩 치환하고 업데이트 수행
+        for loc_id, loc_text in rows_to_update:
+            new_loc_text = loc_text.replace('&lt;', '<').replace('&gt;', '>')
+            if new_loc_text != loc_text:
                 card_cursor.execute("""
-                    SELECT LocId, Loc, Formatted
-                    FROM Localizations_koKR
+                    UPDATE Localizations_koKR
+                    SET Loc = ?
                     WHERE LocId = ?
-                """, (search_value,))
-                rows = card_cursor.fetchall()
+                """, (new_loc_text, loc_id))
 
-                if rows:
-                    formatted_values = {row[2] for row in rows}  # Formatted column
-                    for row in rows:
-                        formatted_value = row[2]
-                        new_value = None
 
-                        if 0 in formatted_values and formatted_value == 0:
-                            new_value = value_for_0
-                        elif 0 in formatted_values and formatted_value == 1:
-                            new_value = value_for_1 if value_for_1 else value_for_0
-                        elif 0 not in formatted_values and formatted_value == 1:
-                            new_value = value_for_0
-                        elif 2 in formatted_values and formatted_value == 2:
-                            new_value = value_for_2
+#직접 입력한 오역 수정파트 
+        for card in card_values_to_update:
+            search_value = card['LocId']
+            value_for_0 = card['Formatted_0']
+            value_for_1 = card['Formatted_1']
+            value_for_2 = formatting_for_2(card['Formatted_0'])
 
-                        if new_value and row[1] != new_value:
-                            card_cursor.execute("""
-                                UPDATE Localizations_koKR
-                                SET Loc = ?
-                                WHERE LocId = ? AND Formatted = ?
-                            """, (new_value, search_value, formatted_value))
-                    
-                        if formatted_value != 2 :
-                            print(f"{row[1]}가 {new_value}로 변경되었습니다.\n")
+            card_cursor.execute("""
+                SELECT LocId, Loc, Formatted
+                FROM Localizations_koKR
+                WHERE LocId = ?
+            """, (search_value,))
+            rows = card_cursor.fetchall()
 
-        else:
-            
-            card_select_query = f"""
-                    SELECT {card_search_column}, {card_target_column}, {card_name_en}, {card_name_kr}, {card_formatted_column}
-                    FROM {card_table_name}
-                    WHERE {card_search_column} = ?
-                """
+            if rows:
+                formatted_values = {row[2] for row in rows}  # Formatted column
+                for row in rows:
+                    formatted_value = row[2]
+                    new_value = None
 
-            for card in card_values_to_update:
-                search_value = card['LocId']
-                value_for_0 = card['Formatted_0']
-                value_for_1 = card['Formatted_1']
-                value_for_2 = formatting_for_2(card['Formatted_0'])
+                    if 0 in formatted_values and formatted_value == 0:
+                        new_value = value_for_0
+                    elif 0 in formatted_values and formatted_value == 1:
+                        new_value = value_for_1 if value_for_1 else value_for_0
+                    elif 0 not in formatted_values and formatted_value == 1:
+                        new_value = value_for_0
+                    elif 2 in formatted_values and formatted_value == 2:
+                        new_value = value_for_2
 
-                # 특정 값을 포함하는 행 찾기
-                card_cursor.execute(card_select_query, (search_value,))
-                rows = card_cursor.fetchall()
-
-                if rows:
-                    formatted_values = {row[4] for row in rows}  # Formatted 값의 집합
-
-                    for row in rows:
-                        formatted_value = row[4]
-                        new_value = None
-
-                        if 0 in formatted_values and formatted_value == 0:
-                            new_value = value_for_0
-                        elif 0 in formatted_values and formatted_value == 1: 
-                            if not value_for_1:
-                                new_value = value_for_0
-                            else:
-                                new_value = value_for_1
-                        elif 0 not in formatted_values and formatted_value == 1:
-                            new_value = value_for_0
-                        elif 2 in formatted_values and formatted_value == 2:
-                            new_value = value_for_2
-                        if new_value and row[1] != new_value:  # row[1]은 기존의 koKR 값
-                            card_cursor.execute(f"""
-                                UPDATE {card_table_name}
-                                SET {card_target_column} = ?
-                                WHERE {card_search_column} = ?
-                                AND {card_formatted_column} = ?
-                            """, (new_value, search_value, formatted_value))
-                            updated = True
-                        if formatted_value != 2 :
-                            print(f"{row[3]}({row[2]})가 {new_value}로 변경되었습니다.\n")
-
+                    if new_value and row[1] != new_value:
+                        card_cursor.execute("""
+                            UPDATE Localizations_koKR
+                            SET Loc = ?
+                            WHERE LocId = ? AND Formatted = ?
+                        """, (new_value, search_value, formatted_value))
+                
+                    if formatted_value != 2 :
+                        print(f"{row[1]}가 {new_value}로 변경되었습니다.\n")
 
         card_conn.commit()
 
