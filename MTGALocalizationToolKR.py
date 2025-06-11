@@ -175,7 +175,7 @@ for card_file in card_files:
 
     # HTML 태그 치환
         card_cursor.execute("""
-            SELECT LocId, Loc
+            SELECT LocId, Loc, Formatted
             FROM Localizations_koKR
             WHERE Loc LIKE '%&lt;%' OR Loc LIKE '%&gt;%'
         """)
@@ -185,8 +185,10 @@ for card_file in card_files:
         print(f"치환 대상 행 개수: {len(rows_to_update)}")
 
         # 2. 한 행씩 치환하고 업데이트 수행
-        for loc_id, loc_text in rows_to_update:
+        for loc_id, loc_text, formatted in rows_to_update:
             new_loc_text = loc_text.replace('&lt;', '<').replace('&gt;', '>')
+            if formatted == 2:
+                new_loc_text = formatting_for_2(new_loc_text)
             if new_loc_text != loc_text:
                 card_cursor.execute("""
                     UPDATE Localizations_koKR
