@@ -187,14 +187,19 @@ for card_file in card_files:
         # 2. 한 행씩 치환하고 업데이트 수행
         for loc_id, loc_text, formatted in rows_to_update:
             new_loc_text = loc_text.replace('&lt;', '<').replace('&gt;', '>')
+
             if formatted == 2:
                 new_loc_text = formatting_for_2(new_loc_text)
+            else:
+                new_loc_text = unicodedata.normalize('NFC', new_loc_text)
+
             if new_loc_text != loc_text:
                 card_cursor.execute("""
                     UPDATE Localizations_koKR
                     SET Loc = ?
-                    WHERE LocId = ?
-                """, (new_loc_text, loc_id))
+                    WHERE LocId = ? AND Formatted = ?
+                """, (new_loc_text, loc_id, formatted))
+
 
 
 #직접 입력한 오역 수정파트 
